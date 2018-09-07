@@ -19,7 +19,11 @@ Getting Started
 - Install the project in editable mode with its testing requirements.
 
     env/bin/pip install -e ".[testing]"
+{% if cookiecutter.backend == 'sqlalchemy' %}
+- Configure the database:
 
+    %(init_cmd)s development.ini
+{% endif %}
 - Run your project's tests.
 
     env/bin/pytest
