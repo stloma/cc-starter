@@ -82,6 +82,7 @@ def display_actions_message():
         pytest_cmd=os.path.join(venv_bin, 'pytest'),
         pserve_cmd=os.path.join(venv_bin, 'pserve'),
         {%- if cookiecutter.backend == 'sqlalchemy' %}
+        alembic_cmd=os.path.join(venv_bin, 'alembic'),
         init_cmd=os.path.join(
             venv_bin, 'initialize_{{ cookiecutter.repo_name }}_db'),
         {% endif %}
@@ -108,7 +109,12 @@ def display_actions_message():
         Install the project in editable mode with its testing requirements.
             %(pip_cmd)s install -e ".[testing]"
         {% if cookiecutter.backend == 'sqlalchemy' %}
-        Configure the database:
+        Migrate the database using Alembic.
+            # Generate your first revision.
+            %(alembic_cmd)s -c development.ini revision --autogenerate -m "init"
+            # Upgrade to that revision.
+            %(alembic_cmd)s -c development.ini upgrade head
+            # Load default data.
             %(init_cmd)s development.ini
         {% endif %}
         Run your project's tests.
