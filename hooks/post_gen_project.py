@@ -3,7 +3,7 @@ import sys
 import shutil
 from textwrap import dedent
 
-working = os.path.abspath(os.path.join(os.path.curdir))
+WORKING = os.path.abspath(os.path.join(os.path.curdir))
 
 
 def main():
@@ -15,7 +15,7 @@ def main():
 def clean_unused_template_settings():
     selected_lang = '{{ cookiecutter.template_language }}'
     templates = os.path.join(
-        working, '{{cookiecutter.repo_name}}', 'base_templates')
+        WORKING, '{{cookiecutter.repo_name}}', 'base_templates')
 
     if selected_lang == 'chameleon':
         extension = '.pt'
@@ -35,7 +35,6 @@ def delete_other_ext(directory, extension):
 
 def clean_unused_backend():
     selected_backend = '{{ cookiecutter.backend }}'
-    base_prefix = 'base_'
 
     if selected_backend == 'none':
         prefix = None
@@ -47,20 +46,39 @@ def clean_unused_backend():
         prefix = 'zodb_'
         rm_prefixes = ['sqlalchemy_']
 
-    w_dir = os.path.join(
-                working, '{{cookiecutter.repo_name}}')
+    scaffold_directory = os.path.join(
+                WORKING, '{{cookiecutter.repo_name}}')
 
-    for folder in os.listdir(w_dir):
-        full_path = os.path.join(w_dir, folder)
-        if folder.startswith(base_prefix):
-            folder = folder[len(base_prefix):]
-            os.rename(full_path, os.path.join(w_dir, folder))
+    delete_other_files(scaffold_directory, prefix, rm_prefixes)
+
+
+def delete_other_files(directory, current_prefix, rm_prefixes):
+    """
+    Each backend has associated files in the cookiecutter, prefixed by it's
+    name. Additionally, there is a base_ prefix that gets included no matter
+    the selection. Here, we rename or remove these prefixes based on the
+    selected backend.
+    """
+    for filename in os.listdir(directory):
+        full_path = os.path.join(directory, filename)
+
+        base_prefix = 'base_'
+        if filename.startswith(base_prefix):
+            filename = filename[len(base_prefix):]
+            os.rename(full_path, os.path.join(directory, filename))
+
         for rm_prefix in rm_prefixes:
-            if folder.startswith(rm_prefix):
-                shutil.rmtree(full_path)
-            elif prefix and folder.startswith(prefix):
-                folder = folder[len(prefix):]
-                os.rename(full_path, os.path.join(w_dir, folder))
+
+            if filename.startswith(rm_prefix):
+
+                if os.path.isdir(full_path):
+                    shutil.rmtree(full_path)
+                else:
+                    os.unlink(full_path)
+
+            elif current_prefix and filename.startswith(current_prefix):
+                filename = filename[len(current_prefix):]
+                os.rename(full_path, os.path.join(directory, filename))
 
 
 def display_actions_message():
