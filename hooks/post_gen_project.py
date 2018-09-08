@@ -126,7 +126,8 @@ def display_actions_message():
 
         Install the project in editable mode with its testing requirements.
             %(pip_cmd)s install -e ".[testing]"
-        {% if cookiecutter.backend == 'sqlalchemy' %}
+
+        {% if cookiecutter.backend == 'sqlalchemy' -%}
         Migrate the database using Alembic.
             # Generate your first revision.
             %(alembic_cmd)s -c development.ini revision --autogenerate -m "init"
@@ -134,7 +135,8 @@ def display_actions_message():
             %(alembic_cmd)s -c development.ini upgrade head
             # Load default data.
             %(init_cmd)s development.ini
-        {% endif %}
+
+        {% endif -%}
         Run your project's tests.
             %(pytest_cmd)s
 

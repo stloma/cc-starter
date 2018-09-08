@@ -1,4 +1,6 @@
 from pyramid.view import view_config
+
+
 {%- if cookiecutter.backend == 'zodb' %}
 
 from ..models import MyModel
@@ -7,6 +9,8 @@ from ..models import MyModel
 @view_config(context=MyModel, renderer='../templates/mytemplate.{{ "pt" if "chameleon" == cookiecutter.template_language else cookiecutter.template_language }}')
 def my_view(request):
     return {'project': '{{ cookiecutter.project_name }}'}
+
+
 {%- elif cookiecutter.backend == 'sqlalchemy' %}
 from pyramid.response import Response
 
@@ -39,10 +43,14 @@ might be caused by one of the following things:
 After you fix the problem, please restart the Pyramid application to
 try it again.
 """
-{%- else %}
+
+
+{%- elif cookiecutter.backend == 'none' %}
 
 
 @view_config(route_name='home', renderer='../templates/mytemplate.{{ "pt" if "chameleon" == cookiecutter.template_language else cookiecutter.template_language }}')
 def my_view(request):
     return {'project': '{{ cookiecutter.project_name }}'}
+
+
 {%- endif %}
