@@ -24,7 +24,7 @@ def main(global_config, **settings):
         config.include('pyramid_zodbconn')
         config.set_root_factory(root_factory)
     {%- endif %}
-        config.include('.routes')
         config.include('pyramid_{{ cookiecutter.template_language }}')
+        config.include('.routes')
         config.scan()
-        return config.make_wsgi_app()
+    return config.make_wsgi_app()
